@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: db
+    build: 
+      context: ./db
+      dockerfile: db.Dockerfile
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - deng-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  word:
+    container_name: word
+    build:
+      context: ./words
+      dockerfile: word.Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  web:
+    container_name: web
+    build:
+      context: ./web
+      dockerfile: web.Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - word
+
+volumes:
+  deng-data:
